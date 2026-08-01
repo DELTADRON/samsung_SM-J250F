@@ -11,6 +11,7 @@
  */
 #include <linux/battery/sec_battery.h>
 #include <linux/sec_param.h>
+#include <linux/muic/muic.h>
 
 #if defined(CONFIG_SEC_MPP_SHARE)
 #include <linux/sec_mux_sel.h>
