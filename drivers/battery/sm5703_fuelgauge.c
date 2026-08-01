@@ -11,6 +11,8 @@
  * of the License, or (at your option) any later version.
  */
 
+#include <linux/i2c.h>
+
 #include <linux/battery/fuelgauge/sm5703_fuelgauge.h>
 #include <linux/battery/fuelgauge/sm5703_fuelgauge_impl.h>
 #include <linux/uaccess.h>
