@@ -17,6 +17,15 @@ echo " Output: $OUT"
 echo " Jobs:   $JOBS"
 echo "===================================="
 
+echo Starting to create config
+make O="$OUT" \
+    ARCH=arm \
+    CROSS_COMPILE=arm-eabi- \
+    VARIANT_DEFCONFIG=msm8937_sec_j2y18lte_mea_open_defconfig \
+    SELINUX_DEFCONFIG=selinux_defconfig \
+    msm8937_sec_defconfig
+
+
 # Check config
 if [ ! -f "$OUT/.config" ]; then
     echo "ERROR: $OUT/.config missing"
@@ -31,6 +40,11 @@ make O=output ARCH=arm CROSS_COMPILE=arm-eabi- olddefconfig
 
 
 echo "[2/5] Building kernel..."
+echo "      Building vmlinux..."
+
+make O=output ARCH=arm CROSS_COMPILE=arm-eabi- vmlinux -j"$JOBS"
+
+echo "      Building zImage..."
 make O=output \
      ARCH=arm \
      CROSS_COMPILE=arm-eabi- \
@@ -47,24 +61,24 @@ fi
 
 echo "zImage OK"
 
-DTB_COUNT=$(find "$OUT/arch/arm/boot/dts" -name "*.dtb" | wc -l)
+# DTB_COUNT=$(find "$OUT/arch/arm/boot/dts" -name "*.dtb" | wc -l)
 
-if [ "$DTB_COUNT" -eq 0 ]; then
-    echo "ERROR: No DTBs found"
-    exit 1
-fi
+# if [ "$DTB_COUNT" -eq 0 ]; then
+#     echo "ERROR: No DTBs found"
+#     exit 1
+# fi
 
-echo "DTBs found: $DTB_COUNT"
+# echo "DTBs found: $DTB_COUNT"
 
 
-echo "[4/5] Building Qualcomm DT image..."
+# echo "[4/5] Building Qualcomm DT image..."
 
-mkdir -p "$OUT/dt"
+# mkdir -p "$OUT/dt"
 
-"$KERNEL_DIR/tools/dtbTool" \
-    -o "$OUT/dt/dt.img" \
-    -s 2048 \
-    "$OUT/arch/arm/boot/dts"
+# "$KERNEL_DIR/tools/dtbTool" \
+#     -o "$OUT/dt/dt.img" \
+#     -s 2048 \
+#     "$OUT/arch/arm/boot/dts"
 
 
 echo "[5/5] Copying final files..."
@@ -74,8 +88,8 @@ mkdir -p "$OUT/final"
 cp "$OUT/arch/arm/boot/zImage" \
    "$OUT/final/kernel"
 
-cp "$OUT/dt/dt.img" \
-   "$OUT/final/dt.img"
+# cp "$OUT/dt/dt.img" \
+#    "$OUT/final/dt.img"
 
 
 echo
@@ -84,7 +98,7 @@ echo " BUILD COMPLETE"
 echo
 echo "Kernel:"
 echo " $OUT/final/kernel"
-echo
-echo "DT:"
-echo " $OUT/final/dt.img"
+# echo
+# echo "DT:"
+# echo " $OUT/final/dt.img"
 echo "===================================="
